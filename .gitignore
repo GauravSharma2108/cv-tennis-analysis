@@ -154,3 +154,4 @@ cython_debug/
 
 # --- custom ignore ---
 yolov8x.pt
+Training/tennis-ball-detection-6
