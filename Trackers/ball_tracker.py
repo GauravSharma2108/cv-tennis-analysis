@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import cv2
 from typing import Dict
 import pickle
+import pandas as pd
 
 class BallTracker:
     """
@@ -79,3 +80,19 @@ class BallTracker:
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 100, 255), 2)
             output_frames.append(frame)
         return output_frames
+    
+    def interpolate_ball_positions(self, ball_detections):
+        """Interpolate the ball positions between the frames using linear interpolation and fill the missing values using backfill for edge cases
+
+        Args:
+            ball_detections: list of dictionaries containing the track IDs as keys and the bounding boxes of the ball as values for each frame (output of detect_frames() method)
+
+        Returns:
+            list: list of dictionaries containing the track IDs as keys and the interpolated bounding boxes of the ball as values for each frame
+        """
+        ball_positions = [x.get(1,[]) for x in ball_detections]
+        df_ball_positions = pd.DataFrame(ball_positions, columns=['x1','y1','x2','y2'])
+        df_ball_positions = df_ball_positions.interpolate(method='linear', axis=0).copy()
+        df_ball_positions = df_ball_positions.bfill().copy()
+        ball_positions = [{1:x} for x in df_ball_positions.values.tolist()]
+        return ball_positions
