@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import cv2
 from typing import Dict
 import pickle
+from Utils.bbox_utils import get_center_of_bbox, measure_distance
 
 class PlayerTracker:
     """
@@ -85,3 +86,46 @@ class PlayerTracker:
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 2)
             output_frames.append(frame)
         return output_frames
+    
+    def choose_players(self, court_keypoints, player_detections_dict):
+        """Choose the two players closest to the court keypoints
+
+        Args:
+            court_keypoints: list of keypoints of the court
+            player_detections_dict (dict): dictionary containing the track IDs as keys and the bounding boxes of the players as values for one frame
+
+        Returns:
+            list: list of track IDs of the two players closest to the court keypoints
+        """
+        distances = []
+        for track_id, bbox in player_detections_dict.items():
+            player_center = get_center_of_bbox(bbox)
+            min_distance = float("inf")
+            for i in range(len(court_keypoints),2):
+                court_keypoint = (court_keypoints[i], court_keypoints[i+1])
+                distance = measure_distance(player_center, court_keypoints)
+                if distance < min_distance:
+                    min_distance = distance
+            distances.append((track_id, min_distance))
+        distances.sort(key=lambda x: x[1])
+        chosen_players = [track_id for track_id, _ in distances[:2]]
+        return chosen_players
+            
+
+    def choose_and_filter_players(self, court_keypoints, player_detections):
+        """Choose the two players closest to the court keypoints and filter the player detections to only include the chosen players. Calls choose_players() for the first frame's player detections.
+
+        Args:
+            court_keypoints: list of keypoints of the court
+            player_detections: list of dictionaries containing the track IDs as keys and the bounding boxes of the players as values for each frame
+
+        Returns:
+            list: list of dictionaries containing the track IDs as keys and the bounding boxes of the chosen players as values for each frame
+        """
+        player_detections_first_frame = player_detections[0]
+        chosen_players = self.choose_players(court_keypoints, player_detections_first_frame)
+        filtered_player_detections = []
+        for player_dict in player_detections:
+            filtered_player_dict = {track_id: bbox for track_id, bbox in player_dict.items() if track_id in chosen_players}
+            filtered_player_detections.append(filtered_player_dict)
+        return filtered_player_detections
