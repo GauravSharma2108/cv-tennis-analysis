@@ -6,4 +6,6 @@ For retraining, a pre-annotated dataset was used from [Roboflow](https://univers
 
 To detect the keypoints on the court, a pretrained ResNet50 model was used, which was fined-tuned by adding a FC layer at the end. The dataset to fine-tune this model was sourced from [this GitHub repo from yastrebksv](https://github.com/yastrebksv/TennisCourtDetector?tab=readme-ov-file).
 
-The player detector module was detecting multiple people in the frame. To handle this, the court keypoints were used.
+The player detector module was detecting multiple people in the frame. To handle this, the court keypoints were used, with the logic that the detections which are closest to any one of the keypoints is a player.
+
+Mini court
