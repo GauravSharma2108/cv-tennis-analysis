@@ -8,4 +8,5 @@ To detect the keypoints on the court, a pretrained ResNet50 model was used, whic
 
 The player detector module was detecting multiple people in the frame. To handle this, the court keypoints were used, with the logic that the detections which are closest to any one of the keypoints is a player.
 
-Mini court
+## Mini court
+To draw the mini-court on the video, the reference measurements of court in meters were used to convert meters to pixel distances, so that the actual court and the mini-court that was drawn for tracking were in the same ratio.
