@@ -10,3 +10,6 @@ The player detector module was detecting multiple people in the frame. To handle
 
 ## Mini court
 To draw the mini-court on the video, the reference measurements of court in meters were used to convert meters to pixel distances, so that the actual court and the mini-court that was drawn for tracking were in the same ratio.
+
+## Ball hit
+Ball hits are detected based on the it's mean position along the y-axis (vertical frame direction) as a function of time. All the directional changes in the curve represents a ball hit. 
