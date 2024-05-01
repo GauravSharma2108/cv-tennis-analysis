@@ -16,3 +16,7 @@ Ball hits are detected based on the it's mean position along the y-axis (vertica
 
 ## Match statistics
 The statistics are recorded and updated on ball hits, and the speeds are calculated on the basis of distance covered by objects per frame. Since the frame rate of the video is known, the distance per frame can be converted to distance per time.
+
+---
+
+Huge shoutout to [Code In a Jiffy](https://www.youtube.com/watch?v=L23oIHZE14w)
